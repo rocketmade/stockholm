@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		32D295711C9CFAEA00577B67 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32D295701C9CFAEA00577B67 /* main.swift */; };
+		32D295781CA04EA900577B67 /* ProvisioningProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32D295771CA04EA900577B67 /* ProvisioningProfile.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -25,6 +26,7 @@
 /* Begin PBXFileReference section */
 		32D2956D1C9CFAEA00577B67 /* Stockholm */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = Stockholm; sourceTree = BUILT_PRODUCTS_DIR; };
 		32D295701C9CFAEA00577B67 /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
+		32D295771CA04EA900577B67 /* ProvisioningProfile.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProvisioningProfile.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -58,6 +60,7 @@
 			isa = PBXGroup;
 			children = (
 				32D295701C9CFAEA00577B67 /* main.swift */,
+				32D295771CA04EA900577B67 /* ProvisioningProfile.swift */,
 			);
 			path = Stockholm;
 			sourceTree = "<group>";
@@ -118,6 +121,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				32D295781CA04EA900577B67 /* ProvisioningProfile.swift in Sources */,
 				32D295711C9CFAEA00577B67 /* main.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -208,6 +212,7 @@
 		32D295751C9CFAEA00577B67 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -215,6 +220,7 @@
 		32D295761C9CFAEA00577B67 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;

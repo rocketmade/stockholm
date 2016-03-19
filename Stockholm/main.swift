@@ -9,40 +9,54 @@
 import Foundation
 
 let fileManager = NSFileManager.defaultManager()
+let profilesPath = NSString(string: "~/Library/MobileDevice/Provisioning Profiles").stringByExpandingTildeInPath
+let profilesURL = NSURL.fileURLWithPath(profilesPath)
+let profileURLS = try! fileManager.contentsOfDirectoryAtURL(profilesURL, includingPropertiesForKeys: nil, options: NSDirectoryEnumerationOptions.SkipsHiddenFiles)
 
+var toRename = Set<ProvisioningProfile>()
+var toDelete = Set<ProvisioningProfile>()
 
-let fileExtension = "mobileprovision"
-
-let path = NSString(string: "~/Library/MobileDevice/Provisioning Profiles").stringByExpandingTildeInPath
-let files = try! fileManager.contentsOfDirectoryAtPath(path).flatMap{NSURL(string: $0)}.filter{$0.pathExtension == fileExtension}
-
-//for file in files {
-var collection = [String]()
-for file in files {
-    let fullPath = NSString(string: path).stringByAppendingPathComponent(file.absoluteString)
-    let args = ["cms","-D","-i",fullPath]
-    let task = NSTask()
-    task.launchPath = "/usr/bin/security"
-    task.arguments = args
-    task.standardInput = NSPipe()
-    task.standardError = NSPipe()
+for url in profileURLS {
     
-    let pipe = NSPipe()
-    task.standardOutput = pipe
-    let handler = pipe.fileHandleForReading
-    task.launch()
+    do {
+        let profile = try ProvisioningProfile(filepath: url)
+       
+        //check if there is a duplicate profile.  This can happen when you update a profile and Xcode doesn't delete the old one.
+        //This is what motivated this whole project.  So this really is the magical part here.  We'll choose to pick the newest one
+        if let duplicate = toRename.filter({$0.name == profile.name}).first where profile.createdAt.compare(duplicate.createdAt) == .OrderedDescending {
+            toRename.remove(duplicate)
+            toDelete.insert(duplicate)
+            toRename.insert(profile)
+        }
+        else {
+            toRename.insert(profile)
+        }
+    }
+    catch {
+        print("Failed to process file: \(url.path!)")
+    }
+}
+
+for profile in toRename {
     
-    let data = handler.readDataToEndOfFile()
-    let hash = try! NSPropertyListSerialization.propertyListWithData(data, options: NSPropertyListReadOptions(), format: nil) as! NSDictionary
-    let uuid = hash["UUID"]!
-    let name = hash["Name"]!
-    let creationDate = hash["CreationDate"]!
-    let x = hash["AppIDName"]!
+    //only rename files that have a uuid filename, i.e. the ones apple copies there
+    let originalFilename = profile.inputFilePath.URLByDeletingPathExtension!.lastPathComponent!
+    guard originalFilename == profile.uuid else {
+        continue
+    }
     
-    collection.append("\(name) - \(uuid) - \(creationDate)")
+    if fileManager.fileExistsAtPath(profile.outputURL.path!) {
+        //delete the old file first.  This could happen if we have a outdated profile and we end up with a new old that
+        //needs to be renamed.  We have to delete before we rename or else NSFileManager will throw an error
+        try! fileManager.removeItemAtURL(profile.outputURL)
+    }
+    
+    try! fileManager.moveItemAtURL(profile.inputFilePath, toURL: profile.outputURL)
 }
 
 
-for e in collection.sort() {
-    print(e)
-}
+
+
+
+
+

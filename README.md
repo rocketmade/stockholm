@@ -2,7 +2,7 @@
 swift command line tool to rename provisioning profiles to a human readable name.
 
 This project was born out of my frustration with an issue where Xcode would download (or move if you downloaded it yourself) provisioning profiles and give them an non human readable filename based on the uuid.
-This allows old provisioning profiles that have been replaced by a newer version to remain in the directory and the current version of Xcode doesn't know that it should ignore the old version.
+This allows old provisioning profiles that have been replaced by a newer version to remain in the directory and the current version of Xcode doesn't know that it should ignore the old version. When encountering duplicates the tool prefers to keep the most recent version based on the provisioning profiles `CreationDate` property inside the plist.
 
 Install:
 
